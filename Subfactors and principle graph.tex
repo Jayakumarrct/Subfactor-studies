@@ -1,0 +1,1116 @@
+\documentclass[11pt, a4paper]{article}
+
+% Meta Information
+\author{Dr. Jayakumar Ravindran}
+\title{\textbf{Lecture Notes on Subfactors and Principal Graphs}}
+\date{\today}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+\usepackage{hyperref}
+
+% Color Definitions
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.55}
+\definecolor{darkgreen}{rgb}{0.0, 0.4, 0.13}
+\definecolor{darkred}{rgb}{0.6, 0.0, 0.0}
+
+% Hyperref Setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=darkblue,
+    filecolor=magenta,
+    urlcolor=darkblue,
+}
+
+% Custom Theorem & Proof Environments with amsthm
+
+\newtheoremstyle{colored_def}
+  {3pt} % Space above
+  {3pt} % Space below
+  {\normalfont} % Body font
+  {} % Indent amount
+  {\bfseries\color{darkblue}} % Theorem head font
+  {.} % Punctuation after theorem head
+  {.5em} % Space after theorem head
+  {}
+
+
+\newtheoremstyle{colored_thm}
+  {3pt} % Space above
+  {3pt} % Space below
+  {\itshape} % Body font
+  {} % Indent amount
+  {\bfseries\color{darkgreen}} % Theorem head font
+  {.} % Punctuation after theorem head
+  {.5em} % Space after theorem head
+  {}
+
+
+\newtheoremstyle{colored_ex}
+  {3pt} % Space above
+  {3pt} % Space below
+  {\normalfont} % Body font
+  {} % Indent amount
+  {\bfseries\color{darkred}} % Theorem head font
+  {.} % Punctuation after theorem head
+  {.5em} % Space after theorem head
+  {}
+
+\theoremstyle{colored_def}
+
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{colored_thm}
+
+\newtheorem{theorem}{Theorem}[section]
+
+\newtheorem{lemma}[theorem]{Lemma}
+
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{colored_ex}
+
+\newtheorem{example}{Example}[section]
+
+\newtheorem{remark}[example]{Remark}
+
+% Redefine proof environment to have colored title
+\makeatletter
+\renewenvironment{proof}[1][\proofname] {\par\pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax\trivlist\item[\hskip\labelsep\itshape\color{gray!50!black}#1\@addpunct{.}]\ignorespaces}{\popQED\endtrivlist\@endpefalse}
+\makeatother
+\renewcommand\qedsymbol{\blacksquare}
+
+% Custom Commands
+
+\newcommand{\C}{\mathbb{C}}
+
+\newcommand{\R}{\mathbb{R}}
+
+\newcommand{\Tr}{\text{Tr}}
+
+\newcommand{\M}{\mathcal{M}}
+
+\newcommand{\N}{\mathcal{N}}
+
+\newcommand{\Hil}{\mathcal{H}}
+
+\newcommand{\B}{\mathcal{B}}
+
+\newcommand{\Z}{\mathcal{Z}}
+
+\newcommand{\E}{\mathbb{E}}
+
+\newcommand{\id}{\text{id}}
+
+\newcommand{\rank}{\text{rank}}
+
+\newcommand{\spn}{\text{span}}
+
+\newcommand{\diag}{\text{diag}}
+
+% TODO: Missing concepts to add in future revisions:
+% - More examples of conditional expectations
+% - Detailed construction of Jones tower in Part 2
+% - Pimsner-Popa basis and its applications
+% - Standard form and modular theory basics
+% - More worked examples for computing relative commutants
+% - Connection between conditional expectations and completely positive maps
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+These notes provide a graduate-level introduction to the theory of subfactors, initiated by Vaughan Jones. We explore the Jones index, the construction of the Jones tower, and the associated graphical invariants known as principal graphs and Bratteli diagrams. A strong emphasis is placed on a wide variety of worked examples, from those arising from groups and quantum groups to the more exotic exceptional cases.
+\end{abstract}
+
+\section*{Preface}
+\textit{Your introductory letter goes here...}
+
+\tableofcontents
+
+\section{Introduction to Subfactor Theory}
+
+\subsection{The Core Idea: An Algebra Inside an Algebra}
+
+At its heart, the theory of subfactors is the study of how one simple algebra can be embedded within another.
+
+\begin{itemize}
+    \item In operator theory, the simplest, most fundamental objects are called \textbf{factors}. A factor is a von Neumann algebra that cannot be broken down (or decomposed) into smaller pieces. 
+    \item A \textbf{subfactor} is simply a factor $\mathcal{N}$ that lives inside a larger factor $\mathcal{M}$. We write this as an inclusion $\mathcal{N} \subset \mathcal{M}$.
+\end{itemize}
+
+The entire theory, initiated by Vaughan Jones in the 1980s, flows from analyzing the relationship between $\mathcal{N}$ and $\mathcal{M}$.
+
+\subsection{The Jones Index: A Measure of Size}
+
+Jones's first breakthrough was to assign a number to this inclusion, called the \textbf{Jones Index}, denoted $[\M : \N]$.
+
+\begin{itemize}
+    \item The index measures the relative size of $\mathcal{N}$ inside $\mathcal{M}$.
+    \item The values it can take are surprisingly restricted. For index values less than or equal to 4, only a discrete set of values is possible:
+    $$ \left\{ 4\cos^2\left(\frac{\pi}{n}\right) : n \geq 3 \right\} \cup [4, \infty] $$
+\end{itemize}
+This quantization was a revolutionary discovery. It revealed a hidden, rigid structure and connected subfactor theory to other areas of mathematics and physics.
+
+\subsection{Graphical Invariants: Seeing the Structure}
+
+The combinatorial essence of a subfactor inclusion is captured by a picture: the \textbf{principal graph}.
+
+\begin{itemize}
+    \item The graph encodes the ``fusion rules'' of associated bimodules, telling us how to decompose complex representations into simple ones.
+    \item For subfactors with index less than 4, the principal graphs are precisely the famous \textbf{A-D-E Dynkin diagrams}, which also classify Lie algebras and finite subgroups of $SU(2)$.
+\end{itemize}
+This deep connection between algebra and combinatorics is a central theme of the theory.
+
+\clearpage
+\section{Part 1 (Expanded): A Deep Dive into Operator Algebras}\label{sec:part1}
+
+As requested, we will now pause our rapid progression through the outline and take a much more detailed, example-driven look at the foundational concepts. This section is designed for a beginner and aims to build a solid, intuitive understanding of the objects of study.
+
+\subsection{C*-Algebras: The Landscape}
+
+A C*-algebra is the perfect marriage of algebra (rings, fields) and analysis (topology, geometry). It is an algebraic structure where the analytical properties are well-behaved.
+
+The formal definition is worth repeating with more commentary.
+
+\begin{definition}[C*-Algebra, Annotated]\label{def:cstar}
+A \textbf{C*-algebra} is a set $A$ with several layers of structure:
+\begin{itemize}
+    \item \textbf{Algebraic Structure}: It's an algebra over the complex numbers, $\C$. This means you can add, subtract, multiply, and scale elements by complex numbers, just like you would with matrices.
+    \item \textbf{Topological Structure}: It is a complete normed space (a Banach space). This means every element has a size (a norm), and Cauchy sequences converge. You can do analysis and talk about limits.
+    \item \textbf{Geometric Structure (Involution)}: It has an operation $*: A \to A$ called an involution. For matrices, this is the conjugate transpose. It must satisfy:
+    \begin{enumerate}
+        \item $(x^*)^* = x$
+        \item $(xy)^* = y^*x^*$
+        \item $(\lambda x + y)^* = \bar{\lambda}x^* + y^*$ for $\lambda \in \C$.
+    \end{enumerate}
+    \item \textbf{The Bridge (The C*-identity)}: All these structures are linked by the most important axiom:
+    $$ \|x^*x\| = \|x\|^2 $$
+    This identity is incredibly powerful. It links the size of an element, $\|x\|$, to the size of the related element $x^*x$. It is responsible for the ``good'' behavior of C*-algebras.
+\end{itemize}
+\end{definition}
+
+Let's make this concrete with the two most important classes of examples.
+
+\begin{example}[Worked Example: The Commutative C*-Algebra $C_0(X)$]\label{ex:commutative-cstar}
+Let $X$ be a locally compact Hausdorff space (for a beginner, think of $X = \R$, or a closed interval like $[0,1]$). Let $C_0(X)$ be the set of all continuous complex-valued functions on $X$ that ``vanish at infinity''.
+\begin{itemize}
+    \item \textbf{Algebra}: We can add and multiply functions pointwise: $(f+g)(x) = f(x)+g(x)$ and $(fg)(x) = f(x)g(x)$.
+    \item \textbf{Involution}: The involution is pointwise complex conjugation: $f^*(x) = \overline{f(x)}$.
+    \item \textbf{Norm}: The norm is the supremum norm: $\|f\| = \sup_{x \in X} |f(x)|$. This is the maximum value the function's magnitude achieves.
+    \item \textbf{Let's check the C*-identity}:
+    $$ \|f^*f\| = \sup_{x \in X} |(f^*f)(x)| = \sup_{x \in X} |\overline{f(x)}f(x)| = \sup_{x \in X} |f(x)|^2 = (\sup_{x \in X} |f(x)|)^2 = \|f\|^2 $$
+    It holds perfectly. So, $C_0(X)$ is a C*-algebra. In fact, a fundamental theorem (Gelfand-Naimark) states that EVERY commutative C*-algebra is of this form for some space $X$.
+\end{itemize}
+\end{example}
+
+\begin{example}[Worked Example: The Non-Commutative C*-Algebra $M_n(\C)$]\label{ex:matrix-cstar}
+Let $M_n(\C)$ be the set of $n \times n$ matrices with complex entries.
+\begin{itemize}
+    \item \textbf{Algebra}: Standard matrix addition and multiplication.
+    \item \textbf{Involution}: The involution is the conjugate transpose: $A^* = \overline{A^T}$.
+    \item \textbf{Norm}: This is the trickiest part. It is the operator norm, inherited from viewing a matrix $A$ as a linear operator on the Hilbert space $\C^n$. It is defined as:
+    $$ \|A\| = \sup_{\|v\|=1, v \in \C^n} \|Av\| $$
+    where $\|v\|$ is the standard Euclidean vector norm. This is not an easy norm to compute by hand!
+    \item \textbf{The C*-identity}: The identity $\|A^*A\| = \|A\|^2$ still holds for this norm.
+\end{itemize}
+For a beginner, the key takeaway is that $M_n(\C)$ is the quintessential example of a finite-dimensional, non-commutative C*-algebra. The algebra $\B(\Hil)$ of all bounded operators on an infinite-dimensional Hilbert space $\Hil$ is its infinite-dimensional counterpart.
+\end{example}
+
+\begin{example}[A C*-algebra that is NOT a von Neumann algebra]\label{ex:cstar-not-vna}
+Consider the Hilbert space $\Hil = L^2(S^1)$, the space of square-integrable functions on the unit circle. Let $C(S^1)$ be the C*-algebra of continuous functions on the circle. We can view $C(S^1)$ as an algebra of operators on $\Hil$ where a function $f \in C(S^1)$ acts as a multiplication operator:
+$$ (M_f \xi)(t) = f(t)\xi(t) \quad \text{for } \xi \in \Hil $$
+The set of all such multiplication operators, $\{M_f : f \in C(S^1)\}$, forms a C*-algebra inside $\B(\Hil)$.
+
+However, it is not a von Neumann algebra. To see this, one can show that the sequence of operators $M_{f_n}$ corresponding to the Fourier series partial sums of a discontinuous function (like a step function) will converge in the weak operator topology to the multiplication operator for that discontinuous function. This limit operator is in the von Neumann algebra generated by $C(S^1)$, but it is not in the original C*-algebra of continuous functions.
+\end{example}
+
+\subsection{Hilbert Spaces and Bounded Operators}
+
+To go deeper, we must first understand the stage on which operator algebras perform: the Hilbert space.
+
+\begin{definition}[Hilbert Space]
+A \textbf{Hilbert Space}, denoted $\Hil$, is a vector space over $\C$ equipped with an inner product $\langle \cdot, \cdot \rangle$ that is complete with respect to the norm induced by the inner product, $\|v\| = \sqrt{\langle v, v \rangle}$.
+\begin{itemize}
+    \item \textbf{Inner Product}: A function $\langle \cdot, \cdot \rangle: \Hil \times \Hil \to \C$ that is conjugate symmetric, linear in the first argument, and positive definite.
+    \item \textbf{Completeness}: Every Cauchy sequence of vectors in $\Hil$ converges to a vector in $\Hil$. This is the same completeness property as in the definition of a Banach space.
+\end{itemize}
+\end{definition}
+
+\begin{example}[Finite-Dimensional Hilbert Space]
+The space $\C^n$ is a Hilbert space with the inner product $\langle v, w \rangle = \sum_{i=1}^n v_i \overline{w_i}$.
+\end{example}
+
+\begin{example}[Infinite-Dimensional Hilbert Space]
+The space $\ell^2(\mathbb{N})$ of square-summable sequences of complex numbers, i.e.,
+$$ \ell^2(\mathbb{N}) = \left\{ (x_n)_{n \in \mathbb{N}} \subset \C : \sum_{n=1}^\infty |x_n|^2 < \infty \right\} $$
+is an infinite-dimensional Hilbert space with inner product $\langle x, y \rangle = \sum_{n=1}^\infty x_n \overline{y_n}$.
+\end{example}
+
+Operators are the functions between Hilbert spaces. In this theory, we are concerned with \textit{bounded linear operators}.
+
+\begin{definition}[Bounded Operator]
+A linear operator $T: \Hil \to \Hil$ is \textbf{bounded} if there exists a constant $C \geq 0$ such that $\|T(v)\| \leq C\|v\|$ for all $v \in \Hil$. The smallest such $C$ is the \textbf{operator norm} of $T$, denoted $\|T\|$.
+\end{definition}
+
+The set of all bounded linear operators on a Hilbert space $\Hil$ is denoted $\B(\Hil)$. This is our main object of study. $\B(\Hil)$ is itself a C*-algebra with the operator norm and the \textbf{adjoint} operation as the involution. For an operator $T$, its adjoint $T^*$ is the unique operator satisfying $\langle Tv, w \rangle = \langle v, T^*w \rangle$ for all $v, w \in \Hil$.
+
+\subsection{Projections and Partial Isometries}
+
+Before we can classify factors, we need to understand two special types of operators.
+
+\begin{definition}[Projection]
+A \textbf{projection} is a bounded operator $p \in \B(\Hil)$ that is a self-adjoint idempotent. This means it satisfies:
+\begin{enumerate}
+    \item $p = p^*$ (self-adjoint)
+    \item $p = p^2$ (idempotent)
+\end{enumerate}
+A projection corresponds to orthogonally projecting onto a closed subspace of $\Hil$. The set of all projections in a von Neumann algebra $\M$ is denoted $\mathcal{P}(\M)$ and forms a lattice.
+\end{definition}
+
+\begin{definition}[Partial Isometry]
+A \textbf{partial isometry} is a bounded operator $u \in \B(\Hil)$ such that $u^*u$ is a projection. If $u$ is a partial isometry, then $u^*u$ is called the \textbf{initial projection} and $uu^*$ is called the \textbf{final projection}. The operator $u$ acts as an isometry from the range of its initial projection to the range of its final projection.
+\end{definition}
+
+\begin{example}[A Partial Isometry in $M_3(\C)$]
+Consider the matrix $u \in M_3(\C)$:
+$$ u = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} $$
+Let's compute $u^*u$ and $uu^*$.
+$$ u^* = \begin{pmatrix} 0 & 0 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} $$
+$$ u^*u = \begin{pmatrix} 0 & 0 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} = \begin{pmatrix} 0 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{pmatrix} $$
+This is a projection (it is self-adjoint and idempotent). So $u$ is a partial isometry. This is the initial projection, $p_{\text{init}}$.
+$$uu^* = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} \begin{pmatrix} 0 & 0 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} $$
+This is also a projection, the final projection $p_{\text{final}}$. The operator $u$ maps the basis vector $e_2$ to $e_1$ and annihilates $e_1$ and $e_3$. It is an isometry from the subspace spanned by $e_2$ (the range of $p_{\text{init}}$) to the subspace spanned by $e_1$ (the range of $p_{\text{final}}$).
+\end{example}
+
+\begin{example}[The Left Regular Representation]\label{ex:left-reg-rep}
+This is the fundamental construction for group von Neumann algebras. Let $G$ be a discrete group.
+\begin{enumerate}
+    \item \textbf{The Hilbert Space}: The space is $\ell^2(G)$, the set of square-summable functions on the group. The standard orthonormal basis for this space is given by the functions $\{\delta_h : h \in G\}$, where $\delta_h(g)$ is 1 if $g=h$ and 0 otherwise.
+    \item \textbf{The Representation}: We define a map $\lambda: G \to \B(\ell^2(G))$ that sends a group element $g \in G$ to a unitary operator $\lambda_g$. This operator acts by left translation on the basis vectors:
+    $$ \lambda_g(\delta_h) = \delta_{gh} $$
+    For a general vector $\xi = \sum_{h \in G} c_h \delta_h \in \ell^2(G)$, the action is $\lambda_g(\xi) = \sum_{h \in G} c_h \delta_{gh}$.
+    \item \textbf{The Algebra}: The \textbf{group von Neumann algebra} $L(G)$ is the von Neumann algebra generated by these unitary operators, i.e.,
+    $$ L(G) = \{ \lambda_g : g \in G \}'' $$
+    This means we take all the operators $\lambda_g$, and find the smallest von Neumann algebra containing them.
+\end{enumerate}
+\end{example}
+
+\subsection{Von Neumann Algebras: The Main Characters}
+
+While C*-algebras are defined purely by their algebraic and topological properties (the norm), von Neumann algebras have an additional, crucial property: they are closed in a different, weaker topology.
+
+\begin{definition}[Commutant]
+Let $\M$ be a subset of $\B(\Hil)$. The \textbf{commutant} of $\M$, denoted $\M'$, is the set of all operators in $\B(\Hil)$ that commute with every operator in $\M$:
+$$ \M' = \{ y \in \B(\Hil) : yx = xy \text{ for all } x \in \M \} $$
+The \textbf{double commutant} is $\M'' = (\M')'$.
+\end{definition}
+
+The commutant is always an algebra. A key fact is that $\M \subseteq \M''$.
+
+\begin{theorem}[Von Neumann's Double Commutant Theorem]
+Let $\M$ be a $*$-subalgebra of $\B(\Hil)$ containing the identity operator. Then $\M$ is a von Neumann algebra if and only if $\M = \M''$.
+\end{theorem}
+
+This theorem provides a purely algebraic definition of a von Neumann algebra! It tells us that a von Neumann algebra is an algebra of operators that is ``closed under taking commutants twice''. This is a much stronger condition than just being a C*-algebra.
+
+\begin{definition}[Von Neumann Algebra]
+A \textbf{von Neumann algebra} $\M$ on a Hilbert space $\Hil$ is a $*$-subalgebra of $\B(\Hil)$ that contains the identity and is closed in the weak operator topology (WOT). Equivalently, $\M = \M''$.
+\end{definition}
+
+\begin{example}[Commutant of Diagonal Matrices]\label{ex:commutant-diagonal}
+Let $\Hil = \C^n$ and consider the algebra $\mathcal{D}_n$ of all diagonal matrices in $M_n(\C) = \B(\C^n)$. What is its commutant?
+\begin{enumerate}
+    \item Let $D \in \mathcal{D}_n$ be a diagonal matrix with distinct entries $d_1, \dots, d_n$.
+    \item Let $A \in M_n(\C)$ be any matrix. We want to find all $A$ such that $AD = DA$.
+    \item Writing this out in terms of matrix entries: $(AD)_{ij} = A_{ij}d_j$ and $(DA)_{ij} = d_i A_{ij}$.
+    \item The condition is $A_{ij}d_j = d_i A_{ij}$ for all $i,j$. This can be rewritten as $A_{ij}(d_j - d_i) = 0$.
+    \item Since we chose the $d_i$ to be distinct, if $i \neq j$, then $d_j - d_i \neq 0$. This forces $A_{ij} = 0$ for all $i \neq j$.
+    \item This means $A$ must be a diagonal matrix.
+\end{enumerate}
+So, the commutant of $\mathcal{D}_n$ is $\mathcal{D}_n' = \mathcal{D}_n$. This means $\mathcal{D}_n$ is a \textbf{maximal abelian self-adjoint algebra} (MASA). Taking the commutant again, we get $\mathcal{D}_n'' = (\mathcal{D}_n')' = \mathcal{D}_n' = \mathcal{D}_n$. Since $\mathcal{D}_n = \mathcal{D}_n''$, it is a von Neumann algebra.
+\end{example}
+
+\begin{example}[Commutant of a Jordan Block]\label{ex:commutant-jordan}
+Let's compute the commutant of a single $3 \times 3$ Jordan block:
+$$ J = \begin{pmatrix} \lambda & 1 & 0 \\ 0 & \lambda & 1 \\ 0 & 0 & \lambda \end{pmatrix} $$
+Let $A$ be a matrix in $\{J\}'$. The condition is $AJ=JA$.
+$$ \begin{pmatrix} a & b & c \\ d & e & f \\ g & h & i \end{pmatrix} \begin{pmatrix} \lambda & 1 & 0 \\ 0 & \lambda & 1 \\ 0 & 0 & \lambda \end{pmatrix} = \begin{pmatrix} \lambda & 1 & 0 \\ 0 & \lambda & 1 \\ 0 & 0 & \lambda \end{pmatrix} \begin{pmatrix} a & b & c \\ d & e & f \\ g & h & i \end{pmatrix} $$
+By carrying out the multiplication and equating entries, one finds that $d=g=h=0$, $a=e=i$, and $b=f$. The resulting matrix $A$ must have the form:
+$$ A = \begin{pmatrix} a & b & c \\ 0 & a & b \\ 0 & 0 & a \end{pmatrix} $$
+This is an upper-triangular Toeplitz matrix. This algebra is clearly not self-adjoint (its transpose is lower triangular), so it is not a von Neumann algebra. The von Neumann algebra generated by $J$ is $\{J\}''$, which is much larger.
+\end{example}
+
+\begin{example}
+For any Hilbert space $\Hil$, the algebra of all bounded operators $\B(\Hil)$ is a von Neumann algebra. Its commutant $\B(\Hil)'$ consists only of scalar multiples of the identity operator, i.e., $\B(\Hil)' = \C \cdot I$. Then the double commutant is $(\C \cdot I)' = \B(\Hil)$.
+\end{example}
+
+\subsection{Factors: The Building Blocks}
+
+The simplest possible von Neumann algebras are the ones that cannot be broken down into smaller pieces. These are called factors.
+
+\begin{definition}[Factor]
+A von Neumann algebra $\M$ is a \textbf{factor} if its center, $\Z(\M) = \M \cap \M'$, is trivial. That is, $\Z(\M) = \C \cdot I$.
+\end{definition}
+
+A factor is a von Neumann algebra that has no non-trivial central projections, meaning it cannot be decomposed as a direct sum of two other von Neumann algebras. They are the ``simple" objects in this theory.
+
+\begin{example}
+$\B(\Hil)$ is a factor for any $\Hil$, because its center is $\C \cdot I$. These are the Type I factors.
+\end{example}
+
+\begin{example}[An Algebra that is NOT a Factor]\label{ex:not-a-factor}
+Consider the von Neumann algebra $\M = M_2(\C) \oplus M_3(\C)$. This can be represented as block-diagonal matrices of the form:
+$$ \begin{pmatrix} A & 0 \\ 0 & B \end{pmatrix} \quad \text{where } A \in M_2(\C), B \in M_3(\C) $$
+Let's compute the center $\Z(\M) = \M \cap \M'$.
+\begin{enumerate}
+    \item The commutant of $\M$ is $\M' = (M_2(\C) \oplus M_3(\C))' = M_2(\C)' \oplus M_3(\C)'$.
+    \item We know that the center of $M_n(\C)$ is just the scalar matrices, so $M_n(\C)' = \C \cdot I_n$.
+    \item Therefore, $\M' = (\C \cdot I_2) \oplus (\C \cdot I_3)$. These are matrices of the form $\begin{pmatrix} \lambda I_2 & 0 \\ 0 & \mu I_3 \end{pmatrix}$ for $\lambda, \mu \in \C$.
+    \item The center is the intersection of $\M$ and $\M'$. An element is in the center if it is in $\M'$ and has the block structure of $\M$. All elements of $\M'$ already have this block structure.
+    \item So, $\Z(\M) = \M' = \{ \lambda I_2 \oplus \mu I_3 : \lambda, \mu \in \C \}$.
+\end{enumerate}
+The center is a 2-dimensional algebra, not $\C \cdot I_{5}$. Therefore, $\M$ is not a factor. It decomposes into the factors $M_2(\C)$ and $M_3(\C)$.
+\end{example}
+
+\begin{example}[Group Algebra $L(\mathbb{Z}_n)$ is not a Factor]\label{ex:LZn}
+Let $G = \mathbb{Z}_n$ be the cyclic group of order $n$. Since $G$ is abelian, every element is its own conjugacy class, so it is not an ICC group. The group algebra $L(\mathbb{Z}_n)$ is also abelian.
+\begin{enumerate}
+    \item Since $L(\mathbb{Z}_n)$ is abelian, its commutant is itself: $L(\mathbb{Z}_n)' = L(\mathbb{Z}_n)$.
+    \item The center is $\Z(L(\mathbb{Z}_n)) = L(\mathbb{Z}_n) \cap L(\mathbb{Z}_n)' = L(\mathbb{Z}_n)$.
+    \item The algebra $L(\mathbb{Z}_n)$ is isomorphic to $\C^n$, which is $n$-dimensional.
+\end{enumerate}
+Since the center is $n$-dimensional (and not 1-dimensional), $L(\mathbb{Z}_n)$ is not a factor.
+\end{example}
+
+\subsection{The Trace and Tracial States}
+
+A key tool for analyzing finite von Neumann algebras (which include Type II$_1$ factors) is the trace.
+
+\begin{definition}[Trace]
+A \textbf{trace} on a von Neumann algebra $\M$ is a linear functional $\Tr: \M \to \C$ that satisfies the tracial property:
+$$ \Tr(xy) = \Tr(yx) \quad \text{for all } x, y \in \M $$
+A trace is called:
+\begin{itemize}
+    \item \textbf{Faithful} if $\Tr(x^*x) > 0$ for all non-zero $x \in \M$.
+    \item \textbf{Normal} if it is continuous with respect to the ultraweak topology.
+    \item A \textbf{state} if it is positive ($\Tr(x^*x) \geq 0$) and $\Tr(I) = 1$.
+\end{itemize}
+A trace that is a faithful normal state is often called a \textbf{tracial state}.
+\end{definition}
+
+The existence of a tracial state is a defining characteristic of a Type II$_1$ factor. It allows us to talk about a ``continuous dimension theory" for projections in the algebra.
+
+\begin{example}[Trace on $M_n(\C)$]
+The algebra of $n \times n$ matrices has a unique tracial state, the normalized trace:
+$$ \Tr(A) = \frac{1}{n} \sum_{i=1}^n A_{ii} $$
+This trace is faithful and normal. For any projection $p \in M_n(\C)$, $\Tr(p) = \frac{\text{rank}(p)}{n}$, which can take values in $\{0, \frac{1}{n}, \frac{2}{n}, \dots, 1\}$.
+\end{example}
+
+\begin{example}[Trace on a Group Von Neumann Algebra]\label{ex:trace-group-algebra}
+For a group von Neumann algebra $L(G)$, there is a canonical tracial state defined by the identity element of the group.
+\begin{enumerate}
+    \item Recall that any element $x \in L(G)$ can be seen as an operator on $\ell^2(G)$.
+    \item The trace of $x$ is defined by its ``coefficient" at the identity element $e \in G$.
+    $$ \Tr(x) = \langle x(\delta_e), \delta_e \rangle $$ 
+    where $\delta_e$ is the basis vector for the identity.
+    \item Let's check the tracial property for the generating operators. Let $x = \lambda_g$ and $y = \lambda_h$.
+    $$ \Tr(\lambda_g \lambda_h) = \Tr(\lambda_{gh}) = \langle \delta_{gh}, \delta_e \rangle = \begin{cases} 1 & \text{if } gh = e \\ 0 & \text{otherwise} \end{cases} $$
+    $$ \Tr(\lambda_h \lambda_g) = \Tr(\lambda_{hg}) = \langle \delta_{hg}, \delta_e \rangle = \begin{cases} 1 & \text{if } hg = e \\ 0 & \text{otherwise} \end{cases} $$
+    Since $gh=e$ if and only if $hg=e$, the property holds for generators, and can be extended to the whole algebra.
+\end{enumerate}
+This trace is faithful and normal, making $L(G)$ a finite von Neumann algebra. If $G$ is also ICC, then $L(G)$ is a Type II$_1$ factor.
+\end{example}
+
+\subsection{The Murray-von Neumann Classification of Factors}
+
+Murray and von Neumann discovered that factors can be classified into three main types based on the structure of their lattice of projections, $\mathcal{P}(\M)$. The key idea is to define a way to compare the ``size'' of projections.
+
+\begin{definition}[Murray-von Neumann Equivalence]
+Let $\M$ be a von Neumann algebra and let $p, q \in \mathcal{P}(\M)$ be two projections.
+\begin{itemize}
+    \item We say $p$ and $q$ are \textbf{Murray-von Neumann equivalent}, written $p \sim q$, if there exists a partial isometry $u \in \M$ such that the initial projection is $p$ and the final projection is $q$. That is:
+    $$ u^*u = p \quad \text{and} \quad uu^* = q $$
+    This means there is an isometry within $\M$ mapping the range of $p$ to the range of $q$.
+    \item We say $p$ is \textbf{sub-equivalent} to $q$, written $p \preccurlyeq q$, if $p$ is equivalent to a sub-projection of $q$; i.e., $p \sim q_0$ for some projection $q_0 \leq q$.
+\end{itemize}
+The relation $\sim$ is an equivalence relation on $\mathcal{P}(\M)$.
+\end{definition}
+
+This equivalence relation allows us to classify projections as ``finite'' or ``infinite''.
+
+\begin{definition}[Finite and Infinite Projections]
+A projection $p \in \mathcal{P}(\M)$ is called \textbf{infinite} if it is equivalent to a proper sub-projection of itself. That is, if there exists a projection $q < p$ (meaning $q \leq p$ and $q \neq p$) such that $p \sim q$. Otherwise, $p$ is called \textbf{finite}.
+
+A von Neumann algebra $\M$ is called finite if its identity element $I$ is a finite projection.
+\end{definition}
+
+With these tools, we can give a more careful definition of the types of factors.
+
+\begin{description}
+    \item[Type I] A factor $\M$ is Type I if it contains a \textbf{minimal projection}. A minimal projection is a non-zero projection $p$ such that if $q \leq p$ is another projection, then either $q=0$ or $q=p$.
+    \begin{itemize}
+        \item This is the ``discrete'' case. The lattice of projections is atomic.
+        \item A Type I factor is always isomorphic to $\B(\Hil)$ for some Hilbert space $\Hil$.
+        \item If $\dim(\Hil) = n < \infty$, it is a \textbf{Type I$_n$} factor, and $\M \cong M_n(\C)$.
+        \item If $\dim(\Hil) = \infty$, it is a \textbf{Type I$_\infty$} factor.
+    \end{itemize}
+
+    \item[Type II] A factor $\M$ is Type II if it has no minimal projections, but it does contain non-zero finite projections.
+    \begin{itemize}
+        \item The absence of minimal projections means the geometry is ``continuous''.
+        \item \textbf{Type II$_1$}: The factor is finite (the identity projection $I$ is finite). This implies that \textit{all} projections in the algebra are finite. These factors are characterized by the existence of a unique faithful normal tracial state. The trace of projections covers the entire continuous range $[0, 1]$.
+        \item \textbf{Type II$_\infty$}: The factor is infinite (the identity projection $I$ is infinite) but it still contains some non-zero finite projections. These factors are ``semi-finite''. They are always of the form $\M_1 \otimes \B(\Hil)$ where $\M_1$ is a Type II$_1$ factor and $\Hil$ is infinite-dimensional. The range of a dimension function on their projections is $[0, \infty]$.
+    \end{itemize}
+
+    \item[Type III] A factor $\M$ is Type III if it contains no non-zero finite projections.
+    \begin{itemize}
+        \item This is the ``purely infinite'' case. Every non-zero projection is infinite.
+        \item In a Type III factor, all non-zero projections are equivalent to the identity. This is a highly non-intuitive property.
+        \item These factors arise naturally in quantum statistical mechanics and quantum field theory.
+    \end{itemize}
+\end{description}
+
+\begin{example}[Projections in a II$_1$ Factor]\label{ex:proj-ii1}
+This is the most mind-bending part of the theory for beginners. In $M_n(\C)$, the trace of a projection is always a rational number from $\{0, 1/n, \dots, 1\}$. In a II$_1$ factor $\M$, the trace of a projection can be \textbf{any real number} in $[0,1]$.
+
+Let $\M$ be a II$_1$ factor with tracial state $\Tr$.
+\begin{itemize}
+    \item There are no minimal projections. For any projection $p \neq 0$, one can always find a smaller projection $q < p$.
+    \item The fundamental theorem of Murray and von Neumann states that for any real number $\alpha \in [0,1]$, there exists a projection $p \in \M$ such that $\Tr(p) = \alpha$.
+\end{itemize}
+This is why II$_1$ factors are called ``continuous geometries''. The dimension of subspaces (projections) is not quantized, but continuous. For example, in the hyperfinite II$_1$ factor $R$, there are projections of trace $1/\pi$, $1/\sqrt{2}$, etc. This is impossible in finite-dimensional matrix algebras.
+\end{example}
+
+\begin{example}[Tensor Products]\label{ex:tensor-product}
+One can build new von Neumann algebras from old ones using the tensor product.
+\begin{itemize}
+    \item \textbf{Finite-dimensional}: $M_n(\C) \otimes M_m(\C) \cong M_{nm}(\C)$. This is a Type I$_n \otimes$ Type I$_m$ = Type I$_{nm}$.
+    \item \textbf{Constructing Type II$_{\infty}$}: If $\M$ is a Type II$_1$ factor and $\B(\Hil)$ is a Type I$_{\infty}$ factor (with $\dim \Hil = \infty$), then their tensor product $\M \otimes \B(\Hil)$ is a Type II$_{\infty}$ factor. This is the canonical way to construct them.
+    \item \textbf{Constructing Type III}: If $\M$ is a Type II$_{\infty}$ factor, one can perform a construction (the ``crossed product") with a certain action of $\R$ to produce a Type III factor. The details are advanced, but this shows how the types are related.
+\end{itemize}
+\end{example}
+
+\begin{example}[The Hyperfinite Type II$_1$ Factor, $R$]
+The most important example of a Type II$_1$ factor is the \textbf{hyperfinite} one, denoted $R$. It can be constructed as an infinite tensor product of $M_2(\C)$ matrices:
+$$ R = \bigotimes_{n=1}^\infty (M_2(\C), \Tr_2) $$
+It is ``hyperfinite" because it can be approximated by the finite-dimensional matrix algebras $M_{2^n}(\C)$. It is the unique hyperfinite II$_1$ factor, a deep result of Connes. Many ``tame" subfactors are constructed as inclusions into $R$.
+\end{example}
+
+\begin{example}[Group Von Neumann Algebras]
+A rich source of factors comes from group theory. Let $G$ be a countable discrete group. One can construct the \textbf{group von Neumann algebra} $L(G)$. A key result is that $L(G)$ is a factor if and only if $G$ has the \textbf{infinite conjugacy class (ICC)} property (every non-identity element has an infinite conjugacy class).
+\begin{itemize}
+    \item If $G$ is an ICC group, $L(G)$ is a Type II$_1$ factor. For example, the free group on $n$ generators, $F_n$ (for $n \geq 2$), is an ICC group. The factors $L(F_n)$ are all non-isomorphic for different $n$ and are not hyperfinite.
+\end{itemize}
+\end{example}
+
+\subsection{Conditional Expectations in von Neumann Algebras}
+
+Conditional expectations are fundamental for understanding subfactor inclusions. They provide a way to "project" from a larger algebra onto a smaller subalgebra while preserving important structural properties.
+
+\begin{definition}[Conditional Expectation]
+Let $\M$ and $\N$ be von Neumann algebras with $\N \subseteq \M$. A \textbf{conditional expectation} is a linear map $E: \M \to \N$ satisfying:
+\begin{enumerate}
+    \item $E(x) = x$ for all $x \in \N$ (projection property)
+    \item $E(nxm) = nE(x)m$ for all $n, m \in \N$ and $x \in \M$ (bimodule property)
+    \item $E$ is positive: $E(x^*x) \geq 0$ for all $x \in \M$
+    \item $E$ is normal (continuous in the ultraweak topology)
+\end{enumerate}
+\end{definition}
+
+The existence of a conditional expectation is crucial for defining the Jones index.
+
+\begin{theorem}[Existence of Conditional Expectations]
+Let $\N \subseteq \M$ be an inclusion of finite von Neumann algebras with faithful normal traces $\tau_\N$ and $\tau_\M$ respectively. If there exists a constant $c > 0$ such that $\tau_\N(x) = c \cdot \tau_\M(x)$ for all $x \in \N$, then there exists a unique trace-preserving conditional expectation $E: \M \to \N$.
+\end{theorem}
+
+\begin{example}[Conditional Expectation: Block Diagonal Matrices]\label{ex:cond-exp-block}
+Consider the inclusion $\N = M_2(\C) \oplus M_2(\C) \subseteq M_4(\C) = \M$, where $\N$ consists of block diagonal matrices:
+$$ \N = \left\{ \begin{pmatrix} A & 0 \\ 0 & B \end{pmatrix} : A, B \in M_2(\C) \right\} $$
+
+The conditional expectation $E: M_4(\C) \to \N$ is given by:
+$$ E\begin{pmatrix} a_{11} & a_{12} & a_{13} & a_{14} \\ a_{21} & a_{22} & a_{23} & a_{24} \\ a_{31} & a_{32} & a_{33} & a_{34} \\ a_{41} & a_{42} & a_{43} & a_{44} \end{pmatrix} = \begin{pmatrix} a_{11} & a_{12} & 0 & 0 \\ a_{21} & a_{22} & 0 & 0 \\ 0 & 0 & a_{33} & a_{34} \\ 0 & 0 & a_{43} & a_{44} \end{pmatrix} $$
+
+This simply "zeros out" the off-block-diagonal entries. One can verify:
+\begin{itemize}
+    \item $E$ restricted to $\N$ is the identity
+    \item $E$ preserves the normalized trace: $\Tr(E(x)) = \Tr(x)$ for all $x \in M_4(\C)$
+    \item $E$ satisfies the bimodule property
+\end{itemize}
+\end{example}
+
+\begin{example}[Conditional Expectation in Group Algebras]\label{ex:cond-exp-group}
+Let $H \subseteq G$ be a finite index subgroup of a discrete group $G$. This gives an inclusion $L(H) \subseteq L(G)$ of group von Neumann algebras.
+
+The conditional expectation $E: L(G) \to L(H)$ can be defined on group elements by:
+$$ E(\lambda_g) = \begin{cases} \lambda_g & \text{if } g \in H \\ 0 & \text{if } g \notin H \end{cases} $$
+
+For a general element $x = \sum_{g \in G} c_g \lambda_g \in L(G)$, we have:
+$$ E(x) = \sum_{h \in H} c_h \lambda_h $$
+
+This conditional expectation averages over the cosets of $H$ in $G$, effectively "forgetting" the information outside the subgroup $H$.
+\end{example}
+
+\subsection{Finite Index Theory and the Basic Construction}
+
+The theory of finite index inclusions provides the foundation for defining the Jones index and constructing the Jones tower.
+
+\begin{definition}[Finite Index Inclusion]
+Let $\N \subseteq \M$ be an inclusion of Type II$_1$ factors with tracial states $\tau_\N$ and $\tau_\M$ respectively. The inclusion has \textbf{finite index} if there exists a conditional expectation $E: \M \to \N$ that preserves the trace, i.e., $\tau_\N \circ E = \tau_\M$.
+\end{definition}
+
+The key insight is that when an inclusion has finite index, we can measure how much larger $\M$ is compared to $\N$.
+
+\begin{definition}[The Basic Construction]\label{def:basic-construction}
+Let $\N \subseteq \M$ be a finite index inclusion of Type II$_1$ factors with trace-preserving conditional expectation $E: \M \to \N$. The \textbf{basic construction} produces a new von Neumann algebra $\langle \M, e_1 \rangle$ where:
+
+\begin{itemize}
+    \item $e_1$ is the \textbf{Jones projection}, defined by its action on $L^2(\M, \tau)$:
+    $$ e_1(x) = E(x) \quad \text{for all } x \in \M $$
+    \item The Jones projection satisfies the crucial properties:
+    \begin{enumerate}
+        \item $e_1^2 = e_1$ (it's a projection)
+        \item $e_1 x e_1 = E(x) e_1$ for all $x \in \M$
+        \item $x e_1 = e_1 x$ for all $x \in \N$
+    \end{enumerate}
+\end{itemize}
+\end{definition}
+
+The basic construction allows us to build a tower of algebras, which is fundamental to Jones's theory.
+
+\begin{example}[Basic Construction: Matrix Example]\label{ex:basic-construction-matrix}
+Consider the inclusion $\N \subseteq \M = M_4(\C)$ where $\N \cong M_2(\C)$ is embedded as:
+$$ \N = \left\{ \begin{pmatrix} a & b & 0 & 0 \\ c & d & 0 & 0 \\ 0 & 0 & a & b \\ 0 & 0 & c & d \end{pmatrix} : a,b,c,d \in \C \right\} $$
+
+The conditional expectation averages the two diagonal blocks:
+$$ E\begin{pmatrix} x_{11} & x_{12} & x_{13} & x_{14} \\ x_{21} & x_{22} & x_{23} & x_{24} \\ x_{31} & x_{32} & x_{33} & x_{34} \\ x_{41} & x_{42} & x_{43} & x_{44} \end{pmatrix} = \frac{1}{2}\begin{pmatrix} x_{11}+x_{33} & x_{12}+x_{34} & 0 & 0 \\ x_{21}+x_{43} & x_{22}+x_{44} & 0 & 0 \\ 0 & 0 & x_{11}+x_{33} & x_{12}+x_{34} \\ 0 & 0 & x_{21}+x_{43} & x_{22}+x_{44} \end{pmatrix} $$
+
+The Jones projection $e_1$ in this case is:
+$$ e_1 = \frac{1}{2}\begin{pmatrix} 1 & 0 & 1 & 0 \\ 0 & 1 & 0 & 1 \\ 1 & 0 & 1 & 0 \\ 0 & 1 & 0 & 1 \end{pmatrix} $$
+
+One can verify that $e_1 x e_1 = E(x) e_1$ for any $x \in M_4(\C)$.
+\end{example}
+
+\subsection{Properties of Type II$_1$ Factors Essential for Subfactor Theory}
+
+Before proceeding to the Jones index, we need to understand several key properties of Type II$_1$ factors that make subfactor theory possible.
+
+\begin{theorem}[Fundamental Properties of Type II$_1$ Factors]
+Let $\M$ be a Type II$_1$ factor with tracial state $\tau$. Then:
+\begin{enumerate}
+    \item \textbf{Unique Trace}: The tracial state $\tau$ is unique.
+    \item \textbf{Finite Projections}: All projections in $\M$ are finite.
+    \item \textbf{Continuous Dimension}: For any $\alpha \in [0,1]$, there exists a projection $p \in \M$ with $\tau(p) = \alpha$.
+    \item \textbf{Equivalence and Order}: Two projections $p, q \in \M$ satisfy $p \sim q$ if and only if $\tau(p) = \tau(q)$.
+    \item \textbf{Comparability}: For any projections $p, q \in \M$, either $p \preccurlyeq q$ or $q \preccurlyeq p$.
+\end{enumerate}
+\end{theorem}
+
+These properties make Type II$_1$ factors the perfect setting for developing index theory.
+
+\begin{example}[The Dimension Function]\label{ex:dimension-function}
+In a Type II$_1$ factor $\M$, the trace $\tau$ acts as a "continuous dimension function" on projections. Unlike finite-dimensional matrix algebras where dimensions are integers, here we have:
+
+\begin{itemize}
+    \item For any projection $p \in \M$: $\tau(p) \in [0,1]$
+    \item If $p \leq q$ are projections, then $\tau(p) \leq \tau(q)$
+    \item If $p \perp q$ (orthogonal projections), then $\tau(p + q) = \tau(p) + \tau(q)$
+    \item $\tau(I) = 1$ where $I$ is the identity projection
+\end{itemize}
+
+This gives us a way to measure the "size" of any subspace (projection) in the factor, leading naturally to the concept of index.
+\end{example}
+
+\subsection{Inclusions of Factors and Relative Commutants}
+
+The structure of an inclusion $\N \subseteq \M$ is captured by studying relative commutants.
+
+\begin{definition}[Relative Commutant]
+For an inclusion $\N \subseteq \M$ of von Neumann algebras, the \textbf{relative commutant} of $\N$ in $\M$ is:
+$$ \N' \cap \M = \{x \in \M : xy = yx \text{ for all } y \in \N\} $$
+\end{definition}
+
+The relative commutant measures how much $\M$ "extends beyond" $\N$.
+
+\begin{example}[Computing Relative Commutants]\label{ex:relative-commutant}
+Consider the inclusion $\C \subseteq M_n(\C)$ where $\C$ is embedded as scalar matrices.
+
+\begin{itemize}
+    \item The relative commutant is $\C' \cap M_n(\C) = M_n(\C)$, since every matrix commutes with scalar matrices.
+    \item This tells us that $M_n(\C)$ is "maximally non-commutative" relative to its center.
+\end{itemize}
+
+Now consider $\mathcal{D}_n \subseteq M_n(\C)$ where $\mathcal{D}_n$ is the algebra of diagonal matrices.
+
+\begin{itemize}
+    \item As computed earlier, $\mathcal{D}_n' \cap M_n(\C) = \mathcal{D}_n$.
+    \item This inclusion is "maximal" - there's no larger commutative subalgebra containing $\mathcal{D}_n$.
+\end{itemize}
+\end{example}
+
+\begin{theorem}[Properties of Finite Index Inclusions]
+Let $\N \subseteq \M$ be a finite index inclusion of Type II$_1$ factors. Then:
+\begin{enumerate}
+    \item The relative commutant $\N' \cap \M$ is finite-dimensional.
+    \item There exists a trace-preserving conditional expectation $E: \M \to \N$.
+    \item The inclusion can be extended to a Jones tower (which we'll construct in Part 2).
+    \item The index $[\M : \N]$ satisfies $[\M : \N] = \dim(\N' \cap \M)$.
+\end{enumerate}
+\end{theorem}
+
+\subsection{Worked Examples Building Toward the Jones Index}
+
+Let's work through some concrete examples that illustrate the concepts we'll need for understanding the Jones index.
+
+\begin{example}[Finite Index Inclusion: $M_2(\C) \subseteq M_4(\C)$]\label{ex:finite-index-concrete}
+Consider the embedding $\N \cong M_2(\C)$ into $\M = M_4(\C)$ given by $A \mapsto A \oplus A$:
+$$ \begin{pmatrix} a & b \\ c & d \end{pmatrix} \mapsto \begin{pmatrix} a & b & 0 & 0 \\ c & d & 0 & 0 \\ 0 & 0 & a & b \\ 0 & 0 & c & d \end{pmatrix} $$
+
+\textbf{Step 1: Computing the relative commutant.}
+We need to find all $X \in M_4(\C)$ that commute with every matrix of the form $A \oplus A$ for $A \in M_2(\C)$. An element $X = \begin{pmatrix} X_{11} & X_{12} \\ X_{21} & X_{22} \end{pmatrix}$ written in $2 \times 2$ blocks commutes with $\begin{pmatrix} A & 0 \\ 0 & A \end{pmatrix}$ if and only if $X_{ij}A = AX_{ij}$ for all $i,j \in \{1,2\}$.
+
+Since this must hold for all $A \in M_2(\C)$, the blocks $X_{ij}$ must be in the commutant of $M_2(\C)$, which is just the scalar matrices $\C \cdot I_2$. So each $X_{ij}$ must be of the form $\lambda_{ij} I_2$ for some $\lambda_{ij} \in \C$.
+
+The relative commutant is therefore the set of all matrices of the form:
+$$ \N' \cap \M = \left\{ \begin{pmatrix} \lambda_{11} I_2 & \lambda_{12} I_2 \\ \lambda_{21} I_2 & \lambda_{22} I_2 \end{pmatrix} : \lambda_{ij} \in \C \right\} \cong M_2(\C) \otimes I_2 $$
+
+\textbf{Step 2: Dimension and Index.}
+This is a 4-dimensional algebra. If we were to define the index as $\dim(\M)/\dim(\N)$, we would get $16/4 = 4$. The dimension of the relative commutant is also 4.
+
+However, the Jones index depends on the choice of conditional expectation. As shown in Example \ref{ex:basic-construction-matrix}, there exists a conditional expectation for this inclusion that gives a Jones index of 2. This highlights that for matrix algebras, the equality $[\M:\N] = \dim(\N' \cap \M)$ does not hold in general and depends on the context (e.g., choice of conditional expectation).
+\end{example}
+
+\begin{example}[Group Inclusion: $\mathbb{Z}_2 \subseteq \mathbb{Z}_4$]\label{ex:group-inclusion}
+Consider the subgroup inclusion $H = \mathbb{Z}_2 = \{0, 2\} \subseteq \mathbb{Z}_4 = \{0, 1, 2, 3\} = G$.
+
+This gives an inclusion of group algebras $L(\mathbb{Z}_2) \subseteq L(\mathbb{Z}_4)$.
+
+\textbf{Step 1: Understanding the algebras.}
+\begin{itemize}
+    \item $L(\mathbb{Z}_4) = \spn\{\lambda_0, \lambda_1, \lambda_2, \lambda_3\}$ where $\lambda_i$ is the left regular representation of $i \in \mathbb{Z}_4$.
+    \item $L(\mathbb{Z}_2) = \spn\{\lambda_0, \lambda_2\} \subseteq L(\mathbb{Z}_4)$.
+\end{itemize}
+
+\textbf{Step 2: Computing the conditional expectation.}
+The conditional expectation $E: L(\mathbb{Z}_4) \to L(\mathbb{Z}_2)$ is:
+$$ E(\lambda_0) = \lambda_0, \quad E(\lambda_2) = \lambda_2, \quad E(\lambda_1) = E(\lambda_3) = 0 $$
+
+\textbf{Step 3: Computing the index.}
+The index $[L(\mathbb{Z}_4) : L(\mathbb{Z}_2)] = |G|/|H| = 4/2 = 2$.
+
+This matches our general theory: for finite groups, the index of the inclusion $L(H) \subseteq L(G)$ equals the group index $[G : H]$.
+\end{example}
+
+\subsection{The GNS Construction and L²-Spaces}
+
+To fully understand the Jones index, we need to work in the L²-completion of von Neumann algebras.
+
+\begin{definition}[GNS Construction for von Neumann Algebras]
+Let $\M$ be a Type II$_1$ factor with tracial state $\tau$. The \textbf{GNS Hilbert space} $L^2(\M, \tau)$ is the completion of $\M$ with respect to the inner product:
+$$ \langle x, y \rangle = \tau(y^*x) $$
+
+The algebra $\M$ acts on $L^2(\M, \tau)$ by left multiplication: $(a \cdot x)(b) = axb$ for $a \in \M$, $x \in L^2(\M, \tau)$, $b \in \M$.
+\end{definition}
+
+\begin{example}[L²-space for Matrix Algebras]\label{ex:l2-matrix}
+For $\M = M_n(\C)$ with normalized trace $\tau(A) = \frac{1}{n}\text{tr}(A)$:
+
+\begin{itemize}
+    \item $L^2(M_n(\C), \tau)$ can be identified with $M_n(\C)$ itself as a vector space.
+    \item The inner product is $\langle A, B \rangle = \frac{1}{n}\text{tr}(B^*A) = \frac{1}{n}\sum_{i,j} B_{ji}^* A_{ij}$.
+    \item The standard orthonormal basis consists of the matrices $E_{ij}$ (with 1 in position $(i,j)$ and 0 elsewhere), properly normalized.
+\end{itemize}
+\end{example}
+
+This construction is essential for understanding how the Jones projections act in the basic construction.
+
+\subsection{Bimodules and the Pimsner-Popa Inequality}
+
+Bimodules provide the correct framework for understanding the relationship between inclusions and their indices.
+
+\begin{definition}[$\M$-$\N$ Bimodule]
+Let $\M$ and $\N$ be von Neumann algebras. An \textbf{$\M$-$\N$ bimodule} is a Hilbert space $\Hil$ with commuting left and right actions of $\M$ and $\N$ respectively:
+\begin{itemize}
+    \item Left action: $\M \times \Hil \to \Hil$, denoted $(m, \xi) \mapsto m\xi$
+    \item Right action: $\Hil \times \N \to \Hil$, denoted $(\xi, n) \mapsto \xi n$
+    \item Compatibility: $(m\xi)n = m(\xi n)$ for all $m \in \M$, $n \in \N$, $\xi \in \Hil$
+\end{itemize}
+\end{definition}
+
+\begin{example}[The Standard Bimodule]\label{ex:standard-bimodule}
+For an inclusion $\N \subseteq \M$ of Type II$_1$ factors, the GNS space $L^2(\M, \tau)$ becomes an \textbf{$\M$-$\M$ bimodule} with:
+\begin{itemize}
+    \item Left action: $(a \cdot \xi)(x) = a\xi(x)$ for $a \in \M$, $\xi \in L^2(\M)$, $x \in \M$
+    \item Right action: $(\xi \cdot b)(x) = \xi(xb)$ for $\xi \in L^2(\M)$, $b \in \M$, $x \in \M$
+\end{itemize}
+
+We can restrict this to an \textbf{$\M$-$\N$ bimodule} by restricting the right action to $\N$.
+\end{example}
+
+\begin{theorem}[Pimsner-Popa Inequality]\label{thm:pimsner-popa}
+Let $\N \subseteq \M$ be an inclusion of Type II$_1$ factors with conditional expectation $E: \M \to \N$. For any $x \in \M$:
+$$ E(x^*x) \geq [\M : \N]^{-1} E(x)^* E(x) $$
+
+Equality holds if and only if $x \in \N$.
+\end{theorem}
+
+This inequality is fundamental for proving many properties of the Jones index.
+
+\subsection{Preparatory Results for the Jones Index}
+
+Before defining the Jones index in Part 2, let's establish some key preparatory results.
+
+\begin{proposition}[Finite-Dimensionality of Relative Commutants]\label{prop:finite-dim-rel-comm}
+Let $\N \subseteq \M$ be a finite index inclusion of Type II$_1$ factors. Then:
+\begin{enumerate}
+    \item The relative commutant $\N' \cap \M$ is finite-dimensional.
+    \item $\dim(\N' \cap \M) = [\M : \N]$ (this will be our definition of index).
+    \item There exists an orthonormal basis $\{u_i\}_{i=1}^n$ for $\N' \cap \M$ with respect to the trace inner product.
+\end{enumerate}
+\end{proposition}
+
+\begin{example}[Index Calculation via Relative Commutant]\label{ex:index-via-rel-comm}
+Let's consider an example where the index formula holds nicely for matrix algebras. Let $\M = M_2(\C)$ and let $\N = \mathcal{D}_2$ be the subalgebra of diagonal matrices.
+
+\textbf{Step 1: Identify the algebras.}
+$$ \N = \left\{ \begin{pmatrix} a & 0 \\ 0 & d \end{pmatrix} : a, d \in \C \right\}, \quad \M = M_2(\C) $$
+
+\textbf{Step 2: Compute the relative commutant $\N' \cap \M$.}
+We need to find all matrices in $M_2(\C)$ that commute with all diagonal matrices. As shown in Example \ref{ex:commutant-diagonal}, the commutant of the diagonal matrices is the algebra of diagonal matrices itself.
+$$ \N' \cap \M = \mathcal{D}_2' \cap M_2(\C) = \mathcal{D}_2 = \N $$
+
+\textbf{Step 3: Compute the index.}
+The relative commutant $\N' \cap \M$ is the 2-dimensional algebra $\mathcal{D}_2$. Using the dimension of the relative commutant as the definition of the index for this case, we get:
+$$ [\M : \N] = \dim(\N' \cap \M) = 2 $$
+This also matches the formula $\dim(\M) / \dim(\N) = 4/2 = 2$. This type of inclusion, where $\N' \cap \M = \N$, is called a \textbf{maximal abelian subalgebra (MASA)} inclusion.
+\end{example}
+
+\begin{remark}[Looking Ahead to Part 2]
+The concepts developed in this enhanced Part 1 provide the essential foundation for Part 2, where we will:
+\begin{itemize}
+    \item Formally define the Jones Index as $[\M : \N] = \dim(\N' \cap \M)$
+    \item Prove that this definition is well-defined and independent of the choice of conditional expectation
+    \item Construct the Jones tower $\N \subseteq \M \subseteq \M_1 \subseteq \M_2 \subseteq \cdots$
+    \item Show how the Jones projections $e_1, e_2, \ldots$ satisfy the Temperley-Lieb relations
+    \item Prove the fundamental theorem that $[\M : \N] < 4$ if and only if the tower has finite depth
+\end{itemize}
+
+The detailed examples and computational techniques developed here will make these abstract concepts concrete and accessible.
+\end{remark}
+
+\clearpage
+\section{Part 3: Principal Graphs and Graphical Invariants}\label{sec:part3}
+
+The Jones index provides a single numerical invariant for a subfactor, but the true richness of the structure is revealed by graphical invariants. These graphs encode the "quantum symmetry" of the inclusion in a combinatorial way.
+
+\subsection{Bimodules, the Heart of the Matter}
+
+To understand the principal graph, one must first understand bimodules, which are the correct "generalized representations" in this context.
+
+\begin{definition}[Bimodules and Tensor Products]
+An \textbf{N-M bimodule} is a Hilbert space $\Hil$ that is a left $\N$-module and a right $\M$-module, where the two actions commute. The fundamental object of study is the \textbf{N-M bimodule} $_\N L^2(\M)_\M$.
+
+Given an $\N$-$\P$ bimodule $\Hil_1$ and a $\P$-$\M$ bimodule $\Hil_2$, one can form the \textbf{Connes fusion tensor product} $\Hil_1 \otimes_\P \Hil_2$, which is an $\N$-$\M$ bimodule. This operation is highly non-trivial but behaves like a "multiplication" of these generalized representations.
+\end{definition}
+
+The set of irreducible bimodules obtained from an inclusion forms a "fusion category," where the tensor product gives the multiplication rules.
+
+\begin{example}[Fusion Rules for a Group Subfactor]
+Consider the inclusion $L(H) \subseteq L(G)$ for finite groups $H \subseteq G$. The relevant bimodules are indexed by the double cosets $HgH$. The fusion rules are given by how these double cosets multiply.
+
+Let $G = S_3$ and $H = S_2 = \{e, (12)\}$. The double cosets are $S_2 e S_2 = S_2$ and $S_2(13)S_2 = \{ (13), (123), (132), (23) \}$. Let's call the corresponding bimodules $X_0$ and $X_1$. The fusion rules are:
+\begin{itemize}
+    \item $X_0 \otimes X_0 = X_0$ (the trivial bimodule)
+    \item $X_0 \otimes X_1 = X_1 \otimes X_0 = X_1$
+    \item $X_1 \otimes X_1 = X_0 \oplus X_1$ (a more complex calculation)
+\end{itemize}
+These rules tell us how to build up all representations from a single fundamental one.
+\end{example}
+
+\subsection{Constructing the Principal Graph: A Step-by-Step Guide}
+
+The principal graph is the "multiplication graph" for the fundamental bimodule. It tells you how the system grows.
+
+\\textbf{Step 1: Identify the fundamental bimodule.}
+This is typically $_N L^2(M)_M$, which we can just call $X$.
+
+\\textbf{Step 2: Decompose tensor powers of the fundamental bimodule.}
+Start with the trivial bimodule $_N L^2(N)_N$, which we call the "identity" or $*$.
+\begin{itemize}
+    \item The "even" vertices of the graph are the irreducible components of $(X \otimes X^*)^n$.
+    \item The "odd" vertices are the irreducible components of $(X \otimes X^*)^n \otimes X$.
+\end{itemize}
+
+\\textbf{Step 3: Draw the graph.}
+The graph is bipartite. An edge exists from an even vertex $v$ to an odd vertex $w$ if $w$ appears in the decomposition of $v \otimes X$. The number of edges is the multiplicity of $w$ in this decomposition.
+
+\begin{example}[Constructing the $A_4$ graph]
+Consider an index 3 subfactor, e.g., the inclusion $S_3 \subset S_4$. The principal graph is $A_4$.
+\begin{itemize}
+    \item Level 0 (even): Start with the trivial bimodule, $*$.
+    \item Level 1 (odd): Compute $* \otimes X = X$. This is one vertex. Draw an edge from $*$ to $X$.
+    \item Level 2 (even): Compute $X \otimes X^*$. This decomposes into $* \oplus Y$, where $Y$ is a new irreducible bimodule. Draw an edge from $X$ to $*$ and from $X$ to $Y$.
+    \item Level 3 (odd): Compute $Y \otimes X$. This decomposes into $X \oplus Z$. Draw edges...
+\end{itemize}
+This process generates the Bratteli diagram, and if the subfactor has "finite depth," this diagram becomes periodic and can be folded into a single finite principal graph. For the $S_3 \subset S_4$ example, this process stabilizes to give the $A_4$ graph.
+\end{example}
+
+\subsection{Bimodules and Fusion Rules}
+
+The vertices and edges of the principal graph are determined by the representation theory of the inclusion, specifically through the lens of bimodules.
+
+For an inclusion $\N \subseteq \M$, we can consider $L^2(\M)$ as an $\M$-$\N$ bimodule. The key idea is to decompose the higher relative commutants, which are finite-dimensional C*-algebras, into their irreducible components.
+
+\begin{definition}[Standard Bimodule Decomposition]
+Consider the Jones tower $\M_0 = \N \subseteq \M_1 = \M \subseteq \M_2 \subseteq \cdots$. The \textbf{principal graph} is constructed by analyzing the decomposition of $\M_k$ as an $\N$-$\N$ bimodule for $k \geq 0$.
+
+The vertices of the graph correspond to the irreducible $\N$-$\N$ bimodules that appear in the decomposition of the $\M_k$. The edges encode how these bimodules are related through tensor products.
+\end{definition}
+
+\subsection{Constructing the Principal Graph}
+
+A more concrete way to construct the principal graph is by looking at the tower of relative commutants.
+
+\begin{definition}[The Bratteli Diagram]
+Consider the tower of finite-dimensional algebras given by the relative commutants:
+$ \N' \cap \N \subseteq \N' \cap \M \subseteq \N' \cap \M_1 \subseteq \N' \cap \M_2 \subseteq \cdots $
+Let $A_k = \N' \cap \M_k$. The \textbf{Bratteli diagram} for this tower is a graph where:
+\begin{itemize}
+    \item The vertices at level $k$ correspond to the irreducible representations (or minimal central projections) of the algebra $A_k$.
+    \item The number of edges between a vertex $v$ at level $k$ and a vertex $w$ at level $k+1$ is given by the multiplicity of the representation $v$ in the restriction of the representation $w$ from $A_{k+1}$ to $A_k$.
+\end{itemize}
+\end{definition}
+
+The principal graph is a simplified, stationary version of this Bratteli diagram. For many important cases (finite depth subfactors), the Bratteli diagram becomes periodic, and we can "fold" it into a single finite graph.
+
+\begin{definition}[Principal Graph]
+The \textbf{principal graph} $\Gamma$ for the inclusion $\N \subseteq \M$ is a bipartite graph constructed as follows:
+\begin{itemize}
+    \item The vertices are partitioned into two sets, "even" and "odd", corresponding to irreducible bimodules appearing in the decomposition of $\M_{2k}$ and $\M_{2k+1}$ respectively.
+    \item The "even" vertices are the irreducible components of the $\N$-$\M$ bimodules, and the "odd" vertices are the irreducible components of the $\M$-$\N$ bimodules.
+    \item The number of edges between an even vertex $v$ and an odd vertex $w$ is given by the multiplicity of $w$ in the decomposition of the tensor product of $v$ with the fundamental $\M$-$\N$ bimodule.
+\end{itemize}
+\end{definition}
+
+For a subfactor with finite index and finite depth, the principal graph is a finite graph whose adjacency matrix has a norm equal to the square root of the index, $\sqrt{[\M:\N]}$.
+
+\subsection{The A-D-E Classification}
+
+The most remarkable result in the early days of the theory was the discovery that subfactors with an index less than 4 are completely classified by the simply-laced Dynkin diagrams of type A, D, and E.
+
+\begin{theorem}[Jones, Ocneanu, Popa]
+Let $\N \subseteq \M$ be an irreducible inclusion of Type II$_1$ factors with $[\M : \N] < 4$. Then the principal graph of the inclusion is one of the following Dynkin diagrams:
+\begin{itemize}
+    \item $A_n$ ($n \geq 2$)
+    \item $D_n$ ($n \geq 4$)
+    \item $E_6, E_7, E_8$
+\end{itemize}
+Conversely, for each of these diagrams, there exists a unique subfactor having it as a principal graph.
+\end{theorem}
+
+This established a profound and unexpected link between subfactor theory, Lie theory, singularity theory, and statistical mechanics.
+
+A convenient way to visualise the exceptional case $E_6$ is to record its adjacency matrix:
+\[
+A_{E_6} = \begin{pmatrix}
+    0 & 1 & 0 & 0 & 0 & 0 \\
+    1 & 0 & 1 & 0 & 0 & 0 \\
+    0 & 1 & 0 & 1 & 0 & 1 \\
+    0 & 0 & 1 & 0 & 1 & 0 \\
+    0 & 0 & 0 & 1 & 0 & 0 \\
+    0 & 0 & 1 & 0 & 0 & 0
+\end{pmatrix}.
+\]
+The spectral radius of this matrix is $\sqrt{2+\sqrt{3}}$, so the index is $2+\sqrt{3} = 4\cos^2(\pi/12)$.
+
+
+\begin{example}[The $A_n$ Graphs]
+The principal graphs of type $A_n$ correspond to the Jones index values $4\cos^2(\pi/(n+1))$. The simplest case, $A_2$, corresponds to index 1. The graph for $A_3$ corresponds to index 2.
+\end{example}
+
+\begin{example}[The $D_n$ Graphs]
+The principal graphs of type $D_n$ also correspond to index values less than 4. For example, the $D_4$ graph has an adjacency matrix with norm $\sqrt{3}$.
+\end{example}
+
+\begin{example}[The Exceptional Graphs]
+The most fascinating cases are the exceptional graphs $E_6, E_7, E_8$. Their corresponding index values are all less than 4. For example, the $E_6$ graph corresponds to an index of $2 + \sqrt{3}$.
+\end{example}
+
+\subsection{The Tower of Relative Commutants}
+
+The Bratteli diagram is a more general tool that shows the structure of an entire tower of semi-simple algebras, not just the "stationary" part captured by the principal graph.
+
+For a subfactor inclusion $\N \subseteq \M$, we have two towers of higher relative commutants:
+$ \N' \cap \M_k \quad \text{and} \quad \M' \cap \M_k $
+The Bratteli diagrams for these two towers give rise to the principal graph and the dual principal graph.
+
+The study of these diagrams, and the cell systems that can be derived from them, is a field in its own right, known as "paragroup theory" (due to Ocneanu). It provides a complete invariant for finite-depth subfactors.
+
+\section{Part 4: A Menagerie of Examples}\label{sec:part4}
+
+This part is dedicated to exploring a rich collection of examples that illustrate the landscape described in the previous parts. Each family is presented with a concrete recipe, the key invariants, and a pointer to current research directions. Throughout we keep the ambient examples inside the hyperfinite II$_1$ factor $R$, but the same constructions adapt to any strongly amenable II$_1$ factor.
+
+\subsection{How to Read and Use These Examples}\label{subsec:part4-roadmap}
+
+In practice one builds and studies subfactors by iterating the following steps:
+\begin{enumerate}
+    \item \textbf{Choose an ambient symmetry.} Decide on a source of symmetry such as a finite group action, a compact quantum group, or a fusion category.
+    \item \textbf{Produce an inclusion $\N \subset \M$.} Take fixed points, crossed products, or Jones' basic construction to obtain two II$_1$ factors together with a faithful normal conditional expectation $E \colon \M \to \N$.
+    \item \textbf{Compute the Jones index.} Use $E$ to evaluate $[ \M : \N ] = \Tr_\M(1) / \Tr_\M(E(1))$, paying attention to normalisation of the traces.
+    \item \textbf{Analyse relative commutants.} Determine $\N' \cap \M_k$ and $\M' \cap \M_k$ inside the Jones tower to infer depth, central sequence algebras, and the standard invariant.
+    \item \textbf{Extract the principal graph.} Decompose the bimodules ${}_{\N}L^2(\M_k)_{\N}$ into simples; multiplicity matrices give the adjacency data of the principal and dual principal graphs.
+    \item \textbf{Refine with additional structure.} Where available, record planar algebra generators, cell systems, or module category data; these invariants distinguish otherwise similar-looking examples.
+\end{enumerate}
+We now apply this blueprint to three major families.
+
+\subsection{Subfactors from Finite Groups}\label{subsec:group-subfactors}
+
+Outer actions of finite groups deliver the prototypical depth-two subfactors.
+
+\begin{theorem}[Fixed point subfactors]\label{thm:fixed-point}
+Let $G$ be a finite group acting outerly on the hyperfinite II$_1$ factor $R$. The fixed point algebra $\N = R^G$ satisfies:
+\begin{equation*}
+    \N \subset R, \qquad [R : \N] = |G|, \qquad \text{$\N' \cap R_k$ is finite-dimensional for all $k$.}
+\end{equation*}
+Moreover, the standard invariant is depth two; equivalently, $R \cong \N \rtimes G$, and the principal graph is determined by the representation theory of $G$.
+\end{theorem}
+
+\begin{proof}[Sketch of proof]
+The conditional expectation $E_G(x) = \frac{1}{|G|} \sum_{g \in G} \alpha_g(x)$ is faithful, and its Jones index equals $|G|$. Jones' basic construction realises $R \rtimes G$ as the next algebra in the tower, and $\N' \cap (R \rtimes G) \cong \ell^\infty(G)$, so depth is two. The bimodule category generated by ${}_{\N}L^2(R)_{\N}$ is equivalent to $\operatorname{Rep}(G)$, so the principal graph records the induction-restriction matrix for the regular representation.
+\end{proof}
+
+\subsubsection{Step-by-step computation of the principal graph}
+
+Let $\widehat{G}$ denote the irreducible representations of $G$ with dimensions $d_\pi$.
+\begin{enumerate}
+    \item Level 0 (even vertex) is labelled by the trivial representation $\mathbf{1}$.
+    \item Level 1 (odd vertices) are labelled by $\pi \in \widehat{G}$, with $d_\pi$ parallel edges between $\mathbf{1}$ and $\pi$ arising from the decomposition
+    \[
+        {}_{\N}L^2(R)_{\N} \cong \bigoplus_{\pi \in \widehat{G}} d_\pi \, X_\pi.
+    \]
+    \item Level 2 (even vertices) are again indexed by $\widehat{G}$. The number of edges from $\pi$ at level 1 to $\rho$ at level 2 is
+    \[
+        n_{\rho,\pi} = \dim \operatorname{Hom}_G\!\left(\rho, \pi \otimes \C G\right) = d_\pi d_\rho,
+    \]
+    because $\mathbb{C}G$ is the regular representation.
+    \item The pattern stabilises after depth two: subsequent levels alternate between copies of $\widehat{G}$ with multiplicity matrices $[d_\pi d_\rho]$. The spectral radius of the resulting bipartite graph equals $\sqrt{|G|}$, confirming the index.
+\end{enumerate}
+Depth-two subfactors are thus controlled by the pair $(G,\widehat{G})$; Popa's classification shows that the standard invariant completely captures the action up to approx\-imate inner conjugacy.
+
+\begin{example}[$\mathbb{Z}/2$-symmetry of $R$]\label{ex:z2}
+Take the flip automorphism on $R \cong R \olot R$. The inclusion $R^{\mathbb{Z}/2} \subset R$ has index $2$. The representation theory of $\mathbb{Z}/2$ has two one-dimensional irreps, so the principal graph is $A_3$, with the middle vertex representing ${}_{\N}L^2(R)_{\N}$ and the two outer vertices corresponding to the trivial and sign representations.
+\end{example}
+
+\begin{example}[Permutation subfactor for $S_3$]\label{ex:s3}
+Let $S_3$ act by permuting tensor factors of $R^{\olot 3}$. The index equals $6$. The irreps have dimensions $(1,1,2)$, and the first odd level consists of three vertices with multiplicities $(1,1,2)$. Using the fusion rule $\pi_{\mathrm{std}}^{\otimes 2} \cong \mathbf{1} \oplus \operatorname{sgn} \oplus \pi_{\mathrm{std}}$, one computes the level-two multiplicity matrix
+\[
+    N = \begin{pmatrix}
+    1 & 1 & 2 \\
+    1 & 1 & 2 \\
+    2 & 2 & 4
+    \end{pmatrix}.
+\]
+The Perron--Frobenius eigenvalue of the associated bipartite graph is $\sqrt{6}$, so the principal graph realises the depth-two paragroup attached to $S_3$.
+\end{example}
+
+\begin{example}[Bisch--Haagerup amalgamated free product]\label{ex:bisch-haagerup}
+Let $H,K \subset G$ be finite subgroups acting outerly on $R$ with $G = \langle H, K \rangle$. Consider the intermediate lattice
+\[
+    R^G \subset R^H \cap R^K \subset R.
+\]
+When $H$ and $K$ generate $G$ and $H \cap K = \{e\}$, Bisch and Haagerup showed that the resulting index is $|H||K|$ and the principal graph is obtained from the bi-graded fusion graph of $H$ and $K$. These examples often yield reducible principal graphs, providing the first systematic supply of non-irreducible finite index subfactors.
+\end{example}
+
+\begin{remark}[Galois correspondence]
+Intermediate subfactors between $R^G$ and $R$ correspond to subgroups of $G$ via the Galois correspondence $R^H$ for $H \leq G$. This allows one to read off the lattice of intermediate fields directly from the group-theoretic data, a crucial ingredient in Popa's deformation/rigidity techniques.
+\end{remark}
+
+\subsection{Quantum Group and Fusion Category Examples}\label{subsec:quantum}
+
+Quantum symmetry vastly enlarges the supply of exotic principal graphs. Here ``quantum group'' is interpreted through rigid $\mathrm{C}^*$-tensor categories.
+
+\begin{theorem}[Jones--Wenzl, Ocneanu, Popa]\label{thm:jones-wenzl}
+For $q = e^{\frac{\pi i}{\ell}}$ with $\ell \geq 3$, the representation category $\operatorname{Rep}(SU_q(2))$ admits a unique module category of rank two. Its categorical dimension equals $4 \cos^2\!\left(\frac{\pi}{\ell}\right)$, and the associated subfactor has principal graph $A_{\ell-1}$. More generally, module categories over $\operatorname{Rep}(SU_q(2))$ correspond bijectively to the simply-laced ADE Dynkin diagrams with Coxeter number $\ell$.
+\end{theorem}
+
+\begin{proof}[Idea of proof]
+The Temperley--Lieb planar algebra at loop parameter $\delta = 2 \cos\left(\frac{\pi}{\ell}\right)$ embeds into $\mathcal{B}(L^2(M))$ via Jones' construction. Wenzl idempotents enforce $\ell - 1$ truncation, producing a finite depth subfactor whose standard invariant matches the ADE classification via Ocneanu cells. Popa's reconstruction theorem converts the planar algebra data into a unique II$_1$ subfactor.
+\end{proof}
+
+\subsubsection{Temperley--Lieb realisation}
+
+Fix $\ell \geq 4$ and let $\delta = 2\cos\left(\frac{\pi}{\ell}\right)$. The following step-by-step procedure yields the $A_{\ell-1}$ principal graph:
+\begin{enumerate}
+    \item Start with the Temperley--Lieb algebra $\mathrm{TL}_n(\delta)$ generated by projections $e_i$.
+    \item For $n \geq \ell - 1$ force the Jones--Wenzl idempotent $f_{\ell-1}$ to vanish; this produces a finite-depth planar algebra.
+    \item Realise the planar algebra inside the hyperfinite II$_1$ factor via the path model on $A_{\ell-1}$.
+    \item The resulting subfactor has index $[M:N] = \delta^2 = 4\cos^2\!\left(\frac{\pi}{\ell}\right)$ and principal graph $A_{\ell-1}$.
+\end{enumerate}
+
+\begin{example}[The $E_6$ and $E_8$ quantum subgroups]\label{ex:exceptional-quantum-subgroup}
+Take $q = e^{\frac{\pi i}{12}}$ and $q = e^{\frac{\pi i}{30}}$. Ocneanu showed that besides the $A$ and $D$ graphs there are ADE module categories producing the exceptional $E_6$ and $E_8$ principal graphs. The associated indices are $2 + \sqrt{3}$ and $4\cos^2(\pi/30)$, respectively. These subfactors arise from conformal inclusions $SU(2)_{10} \subset SO(5)_1$ and $SU(2)_{28} \subset (G_2)_1$.
+\end{example}
+
+\begin{example}[Fibonacci (Galois conjugate of $SU(2)_3$)]\label{ex:fibonacci}
+The fusion category $\mathcal{F}$ with simple objects $\{\mathbf{1}, \tau\}$ and fusion rule $\tau^2 = \mathbf{1} \oplus \tau$ admits a planar algebra realisation with loop parameter $\delta = \frac{1 + \sqrt{5}}{2}$. The resulting index is $\delta^2 = \frac{3 + \sqrt{5}}{2}$. The principal graph has one even vertex connected to one odd vertex by two parallel edges, yielding the so-called ``Fibonacci'' graph. This example is paradigmatic in topological quantum computation.
+\end{example}
+
+\begin{example}[Quantum subgroups of $SU(3)_k$]\label{ex:su3}
+For $k \geq 1$, the category $\operatorname{Rep}(SU_q(3))$ at $q = e^{\frac{\pi i}{k+3}}$ admits module categories classified by affine Dynkin diagrams of type $A^{(1)}, D^{(1)}, E^{(1)}$. The corresponding subfactors have principal graphs given by the $\mathcal{A}-\mathcal{D}-\mathcal{E}$ graphs of rank three, and indices computed via the squared modulus of the Perron--Frobenius eigenvector. Explicit examples include the $A^{(1)}_2$ graph at index $3$ and the exceptional $E^{(1)}_5$ with index $3 + \sqrt{3}$.
+\end{example}
+
+\begin{remark}[Planar algebras vs. module categories]
+Every finite depth planar algebra may be recast as a module category over a fusion category. For group examples the relevant fusion category is $\mathsf{Vec}_G$, while for quantum groups it is $\operatorname{Rep}(SU_q(2))$ or its higher rank analogues. Switching viewpoints is often crucial when attempting to classify exotic examples.
+\end{remark}
+
+\subsection{Exceptional and Exotic Constructions}\label{subsec:exceptional}
+
+Beyond groups and Lie-theoretic quantum groups lies a small but intricate zoo of exceptional subfactors. These are typically discovered through a mixture of combinatorics, number theory, and computer-assisted planar algebra calculations.
+
+\subsubsection{Haagerup family}
+
+\begin{example}[Haagerup subfactor]\label{ex:haagerup}
+The Haagerup principal graph begins with a linear arm whose vertex dimensions are $1,3,6,7,8,12,9$ before a trivalent branching. Its norm is $\sqrt{\frac{5 + \sqrt{13}}{2}}$. Haagerup constructed a subfactor of index $\frac{5 + \sqrt{13}}{2} \approx 3.302$ whose higher relative commutants realise this graph. Asaeda and Haagerup later produced a planar algebra description, confirming finite depth. This was the first example beyond the ADE list and required delicate control of Ocneanu cells.
+\end{example}
+
+\begin{example}[Asaeda--Haagerup subfactor]\label{ex:asaeda-haagerup}
+Asaeda and Haagerup discovered a second pair of principal graphs with index $\frac{5 + \sqrt{17}}{2} \approx 3.561$. The construction begins with a combinatorial candidate for the bipartite graph, followed by solving polynomial equations encoding biunitary connections. Subsequent work by Grossman and Snyder showed the corresponding fusion categories possess self-dual simple objects of non-integer dimension, highlighting the profundity of these examples.
+\end{example}
+
+\begin{example}[Extended Haagerup]\label{ex:extended-haagerup}
+Bigelow, Morrison, Peters, and Snyder produced the extended Haagerup subfactor at index $\frac{1}{2}\left(9 + \sqrt{17}\right) \approx 6.561$. The planar algebra is generated by a single 3-box subject to a system of quadratic and cubic skein relations. The principal graph features a long initial arm of length eight attached to a 3-valent branch point, with growth controlled by a Salem number. This example demonstrated that exotic subfactors continue to exist at higher index.
+\end{example}
+
+\subsubsection{Near-group and Izumi type examples}
+
+\begin{example}[Izumi's $ \mathbf{Z}/n\mathbf{Z}$ near-group subfactors]\label{ex:izumi}
+Izumi constructed a family of subfactors whose even part is the near-group fusion category for $\mathbb{Z}/n\mathbb{Z}$. The index equals $n + 1$, and the principal graph has one branch of length $n$ attached to a vertex of valence $n$. The case $n = 3$ reproduces the Haagerup graph, while $n = 5$ gives the so-called 2221 subfactor. Recent work relates these to conformal nets with central charge below one.
+\end{example}
+
+\begin{example}[3331 and 4442 graphs]\label{ex:3331-4442}
+Calegari, Morrison, and Snyder analysed potential principal graphs labelled 3331 and 4442. They proved uniqueness for the 3331 subfactor (index $\frac{7+\sqrt{17}}{2}$) using number-theoretic restrictions on cyclotomic integers and computed generators for the associated planar algebra. The 4442 candidate was subsequently realised by Corey Jones and David Penneys using Deligne tensor products and jellyfish relations.
+\end{example}
+
+\begin{remark}[Current research directions]
+The frontier includes classifying index in the range $(5, 5.25)$, understanding the landscape of subfactors associated with small-depth fusion categories (e.g. $\mathsf{Rep}(D_8)$), and exploring connections with low-dimensional topology via skein-theoretic invariants. Computational tools such as the \texttt{FusionAtlas} package continue to uncover new candidate graphs.
+\end{remark}
+
+\section{Part 5: Advanced Topics}
+We will conclude by touching on modern topics like connections, flatness, and the role of subfactors in the theory of quantum symmetries.
+
+\appendix
+\section{Character Tables for \texorpdfstring{$A_n$}{A\_n}}
+
+% Bibliography will go here
+
+\end{document}
